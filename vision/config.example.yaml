@@ -1,0 +1,33 @@
+# Copy to config.yaml and edit. Coordinates are normalised (0-1) image positions;
+# generate table polygons with:  python -m vision.calibrate --source <camera>
+backend_url: http://localhost:8000
+device_key: ""            # must match RI_DEVICE_KEY on the backend
+
+models:
+  pose: yolo11n-pose.pt   # people + keypoints (raised hand); downloaded on first run
+  objects: yolo11n.pt     # cups/plates/bottles on table surfaces
+  conf: 0.4
+  device: null            # null = auto (CUDA if available), or "cpu"
+
+cameras:
+  - id: cam-1
+    # RTSP example: rtsp://user:password@192.168.1.64:554/Streaming/Channels/101
+    # Webcam: 0     Video file (for demos): ./samples/dining.mp4
+    source: 0
+    fps: 5
+    surface_every_s: 2
+    count_people: true      # enable on ONE camera that sees the whole room
+    entrance_line:          # optional: counts people crossing the door
+      a: [0.05, 0.90]
+      b: [0.30, 0.90]
+      inside_sign: -1
+    timing:                 # debounce settings for this camera's view
+      occupy_s: 8
+      vacate_s: 20
+      visit_s: 3
+    tables:
+      - label: "1"
+        polygon: [[0.10, 0.40], [0.35, 0.40], [0.35, 0.75], [0.10, 0.75]]
+        surface: [[0.15, 0.50], [0.30, 0.50], [0.30, 0.65], [0.15, 0.65]]
+      - label: "2"
+        polygon: [[0.40, 0.40], [0.65, 0.40], [0.65, 0.75], [0.40, 0.75]]
